@@ -54,6 +54,8 @@ TIMELINE_HEADERS = {
     # HINT: dictionary syntax is  "key": "value"  — add it after the
     # **HEADERS line above, separated by a comma.
     # ------------------------------------------------------------------
+    
+    "Accept": "application/vnd.github.mockingbird-preview+json"
 }
 
 # ---------------------------------------------------------------------------
@@ -128,7 +130,8 @@ for issue in issues:
         # HINT skeleton:
         #   if event.get("event") == "..." and "..." in event["source"]["issue"]:
         # ------------------------------------------------------------------
-        if False:  # ← replace this condition with your answer
+        if event.get("event") == "cross-referenced" and "pull_request" in event["source"]["issue"]:
+            linked_pr = event["source"]["issue"]
 
             # --------------------------------------------------------------
             # TODO (3 of 3) — Extract the PR number and title
@@ -147,8 +150,8 @@ for issue in issues:
             #   event["source"]["issue"]["title"]
             # --------------------------------------------------------------
             linked_pr = {
-                "number":     None,   # ← replace with the correct expression
-                "title":      None,   # ← replace with the correct expression
+                "number":     event["source"]["issue"]["number"],
+                "title":      event["source"]["issue"]["title"],
                 "commit_sha": None,
                 "commit_msg": None,
             }

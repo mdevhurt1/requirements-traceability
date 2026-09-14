@@ -165,8 +165,15 @@ for issue in issues:
         #   ...
         # ------------------------------------------------------------------
 
-        commit_sha = "???"   # ← replace with your answer (may be None)
-        commit_msg = "???"   # ← replace with your answer
+        pr_obj = fetch_pr(linked_pr["number"])
+
+        full_sha   = pr_obj.get("merge_commit_sha")   # may be None
+        short_sha  = full_sha[:7] if full_sha else None
+
+        commit_msg = fetch_commit_message(full_sha) if full_sha else None
+
+        commit_sha = short_sha if short_sha else None
+        commit_msg = commit_msg if commit_msg else None
 
         linked_pr["commit_sha"] = commit_sha
         linked_pr["commit_msg"] = commit_msg
@@ -194,7 +201,9 @@ for issue in issues:
         #   using  I{number}  and  PR{number}  and  C{sha}  is safe.
         # ------------------------------------------------------------------
 
-        mermaid_lines.append("# TODO: add Issue → PR → Commit nodes here")  # ← replace this
+        mermaid_lines.append(f'  I{issue["number"]}["Issue #{issue["number"]} — {issue["title"]}"] --> PR{pr_number}["PR #{pr_number}"]')  # ← replace this
+        if commit_sha:
+            mermaid_lines.append(f'  PR{pr_number} --> C{short_sha}["commit {short_sha}"]')
 
     issue["pr"] = linked_pr
 
@@ -221,8 +230,8 @@ untraced = len(issues) - traced
 # Replace the two empty lists below with those expressions.
 # ------------------------------------------------------------------
 
-untraced_issues = []   # ← replace with list comprehension
-no_commit_prs   = []   # ← replace with list comprehension
+untraced_issues = [i for i in issues if i["pr"] is None]  # ← replace with list comprehension
+no_commit_prs   = [i["pr"] for i in issues if i["pr"] and not i["pr"]["commit_sha"]]  # ← replace with list comprehension
 
 gap_rate = round((untraced / len(issues) * 100) if issues else 0)
 
@@ -244,7 +253,8 @@ gap_rate = round((untraced / len(issues) * 100) if issues else 0)
 # gap_rate  that are already defined above.
 # ------------------------------------------------------------------
 
-print("TODO: print summary line")  # ← replace this line
+print(f"Analyzed {len(issues)} issues: {traced} traced, {untraced} untraced.")
+print(f"Gap rate: {gap_rate}%. See report.html for full report.")
 
 # ---------------------------------------------------------------------------
 # Step 6 — Render the full report

@@ -76,6 +76,9 @@ for item in raw_items:
     # HINT: use  `if "pull_request" in item:`  and then `continue`
     # ------------------------------------------------------------------
 
+    if "pull_request" in item:
+        continue
+
     # Build a dict for this issue.
     # The "state" field is currently hardcoded to "?" — fix that in TODO 2.
     issue = {
@@ -91,7 +94,7 @@ for item in raw_items:
         # HINT: the key is just called  "state"  — same name as our field.
         # Replace the "?" below with the correct expression.
         # ------------------------------------------------------------------
-        "state": "?",
+        "state": item["state"],
 
         "pr": None,  # No PR info at this tier — leave this as None
     }
